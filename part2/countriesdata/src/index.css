@@ -27,7 +27,6 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  justify-content: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -67,24 +66,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
-
-.notify {
-  color: green;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.error {
-  color: red;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
 }

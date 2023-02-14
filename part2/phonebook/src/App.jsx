@@ -5,10 +5,23 @@ import Persons from './components/Persons'
 import axios from 'axios';
 import personService from './services/personService';
 
+const Notification = ({ message, cName}) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={cName}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newPerson, setNewPerson] = useState({name: '', number: ''});
   const [searchedName, setSearchedName] = useState('');
+  const [notification, setNotification]= useState({message: null, cName: null});
 
   const personsToShow = persons.filter(person=>{
     return person.name.toLowerCase().includes(searchedName.toLowerCase());
@@ -30,14 +43,24 @@ const App = () => {
       name : newPerson.name,
       number : newPerson.number
     }
+    
     console.log(persons.find(person=> person.name === name.name));
     const person = persons.find(person=> person.name === name.name);
     if(person == undefined){
-      personService.add(name).then(data => setPersons(persons.concat(data)));
+      personService.add(name).then(data => {
+        setPersons(persons.concat(data))
+        setNotification({message: `Added ${data.name}`, cName: 'notify'});
+        setTimeout(()=>{ setNotification({message: null, cName: null})}, 2000);
+      });
     }else {
       if(person.number !== name.number){
         if(window.confirm(`${name.name} is already added to phonebook, replace the old number with the new number ?`)){
           personService.update(person.id, name).then(()=>{
+            personService.getAll().then(data => setPersons(data));
+          }).catch(error=>{
+            console.log(error);
+            setNotification({message: `Information of ${person.name} has been already removed from server`, cName: 'error'});
+            setTimeout(()=>{setNotification({message: null, cName: null})}, 2000);
             personService.getAll().then(data => setPersons(data));
           });
         }
@@ -66,6 +89,13 @@ const App = () => {
     if(window.confirm(`Delete ${person.name}`)){
       personService.remove(person.id).then(()=>{
         personService.getAll().then(data => setPersons(data));
+      }).catch((error)=>{
+        console.log(error);
+        if(error.request.status == 404){
+          setNotification({message: `Information of ${person.name} has been already removed from server`, cName: 'error'});
+          setTimeout(()=>{setNotification({message: null, cName: null})}, 2000);
+          personService.getAll().then(data => setPersons(data));
+        }
       });
     }
   }
@@ -73,6 +103,7 @@ const App = () => {
   return (
     <div className='container'>
       <h2>Phonebook</h2>
+      <Notification message={notification.message} cName={notification.cName}/>
       <Filter value={searchedName} onChange={handleChangeFilter}/>
       
       <h2>add a new</h2>
