@@ -51,6 +51,10 @@ const App = () => {
         setPersons(persons.concat(data))
         setNotification({message: `Added ${data.name}`, cName: 'notify'});
         setTimeout(()=>{ setNotification({message: null, cName: null})}, 2000);
+      }).catch(err=>{
+        console.log(err.response.data.error);
+        setNotification({message: `${err.response.data.error}`, cName: 'error'})
+        setTimeout(()=> {setNotification({message: null, cName: null})}, 3000)
       });
     }else {
       if(person.number !== name.number){
