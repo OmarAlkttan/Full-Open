@@ -1,7 +1,7 @@
 const app = require('./app');
-const config = require('./utils/config')
-const logger = require('./utils/logger')
+const config = require('./utils/config');
+const logger = require('./utils/logger');
 
-app.listen(config.PORT, ()=>{
+app.listen(config.PORT, () => {
   logger.info(`listening to Server in port ${config.PORT}`);
-})
+});

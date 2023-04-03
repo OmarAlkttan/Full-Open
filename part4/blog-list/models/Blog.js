@@ -8,9 +8,9 @@ const url = config.MONGODB_URI;
 logger.info(`connecting to ${url}`);
 
 mongoose.connect(url)
-  .then(()=>{
+  .then(() => {
     logger.info('connected to mongodb');
-  }).catch((err)=>{
+  }).catch((err) => {
     logger.error('error connecting to mongodb', err.message);
   });
 
@@ -19,7 +19,7 @@ const blogSchema = new mongoose.Schema({
   author: String,
   url: String,
   likes: Number
-})
+});
 
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
@@ -29,4 +29,4 @@ blogSchema.set('toJSON', {
   }
 });
 
-module.exports = mongoose.model('Blog', blogSchema)
+module.exports = mongoose.model('Blog', blogSchema);
