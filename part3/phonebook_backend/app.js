@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 
 mongoose.set('strictQuery', false);
 
-logger.info('connecting to', config.MONGOURI);
+logger.info('connecting to', config.MONGODB_URI);
 
 mongoose.connect(config.MONGODB_URI)
   .then(() => {
@@ -31,7 +31,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 app.use(express.json());
 app.use(middleware.requestLogger);
 
-app.use('/api/notes', personsRouter);
+app.use('/api/persons', personsRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

@@ -5,5 +5,5 @@ Content-Type: application/json
   "title": "Creating a Blog List App With Node $ Express",
   "author": "Omar Alktan <3",
   "url": "https://github.com/OmarAlkttan",
-  "likes": 100
+  "likes": 45
 }
