@@ -11,7 +11,7 @@ const api = supertest(app);
 beforeEach(async () => {
   await Blog.deleteMany({});
   await Blog.insertMany(helper.initialBlogs);
-});
+}, 100000);
 
 describe('testing blogs api', () => {
   test('check status code and content-type when get all blogs', async () => {
@@ -22,6 +22,7 @@ describe('testing blogs api', () => {
     await api.post('/api/blogs')
       .send({ 'title': 'adding a blog', 'author': 'Omar Alktan', 'url': 'https://github.com/OmarAlkttan', 'likes': 150 })
       .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${await helper.loggedInUserToken()}`)
       .expect(201)
       .expect('Content-Type', /json/);
 
@@ -41,9 +42,14 @@ describe('testing blogs api', () => {
     const blogs = await api.get('/api/blogs');
     expect(blogs.body).toHaveLength(helper.initialBlogs.length);
 
+    const token = await helper.loggedInUserToken();
+
+    console.log('token', token);
+
     await api.post('/api/blogs')
       .send({ 'title': 'adding a blog', 'author': 'Qobtan', 'url': 'https://github.com/OmarAlkttan', 'likes': 60 })
       .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
       .expect(201)
       .expect('Content-Type', /json/);
 
@@ -55,6 +61,7 @@ describe('testing blogs api', () => {
     const result = await api.post('/api/blogs')
       .send({ 'title': 'adding a blog', 'author': 'Qobtan', 'url': 'https://github.com/OmarAlkttan' })
       .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${await helper.loggedInUserToken()}`)
       .expect(201)
       .expect('Content-Type', /json/);
 
@@ -75,17 +82,34 @@ describe('testing blogs api', () => {
   }, 100000);
 
   test('deleting a blog', async () => {
-    const blogsInDb = await helper.blogsInDb();
-    console.log('blog in DB', blogsInDb);
-    await api.delete(`/api/blogs/${blogsInDb[0].id}`).expect(204);
+    const blogsInDbAtStart = await helper.blogsInDb();
+    console.log('blog in DB', blogsInDbAtStart);
+
+    const token = await helper.loggedInUserToken();
+
+    await api.post('/api/blogs')
+      .send({ 'title': 'adding a blog', 'author': 'Qobtan', 'url': 'https://github.com/OmarAlkttan', 'likes': 60 })
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201)
+      .expect('Content-Type', /json/);
+
+    const blogsInDbAtEnd = await helper.blogsInDb();
+
+    await api.delete(`/api/blogs/${blogsInDbAtEnd[blogsInDbAtEnd.length -1].id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(204);
 
     const blogs = await api.get('/api/blogs');
-    expect(blogs.body).toHaveLength(helper.initialBlogs.length - 1);
+
+    expect(blogs.body).toHaveLength(blogsInDbAtStart.length);
   });
 
   test('deleting not existing blog', async () => {
     const notFoundId = await helper.nonExistingId();
-    await api.delete(`/api/blogs/${notFoundId}`).expect(404);
+    await api.delete(`/api/blogs/${notFoundId}`)
+      .set('Authorization', `Bearer ${await helper.loggedInUserToken()}`)
+      .expect(404);
 
     const blogs = await api.get('/api/blogs');
     expect(blogs.body).toHaveLength(helper.initialBlogs.length);

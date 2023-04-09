@@ -1,9 +1,10 @@
 POST http://localhost:3001/api/blogs HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im9tYXIiLCJpZCI6IjY0MzJjYTcwOTg4MDAzMjZkMWMzMWI1MiIsImlhdCI6MTY4MTA1MTcxNH0.hcgTsyu9Zz3qNZtbbiBU4hrOgKOxoBnuM4omotb7EDE
 
 {
-  "title": "Creating a Blog List App With Node $ Express",
+  "title": "extract token with a middlware",
   "author": "Omar Alktan <3",
   "url": "https://github.com/OmarAlkttan",
-  "likes": 45
+  "likes": 423
 }
