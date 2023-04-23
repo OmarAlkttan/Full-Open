@@ -1,8 +1,1 @@
-/part1/node_modules
-/part1/anecdotes/node_modules
-/part1/courseinfo/node_modules
-/part1/unicafe/node_modules
-/part3/simple-web-server/node_modules
-/part3/phonebook_backend/node_modules
-/part4/blog-list/node_modules
-/part5/bloglist-front/node_modules
+node_modules
