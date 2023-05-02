@@ -2,12 +2,16 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(state => state.anecdotes.filter(a => a.content.includes(state.filter)));
+  const anecdotes = useSelector(({ anecdotes, filter }) => anecdotes.filter(a => a.content.includes(filter))).sort((a, b) => b.votes - a.votes);
   const dispatch = useDispatch()
 
-  const vote = (id) => {
-    console.log('vote', id)
-    dispatch({ type: 'VOTE', payload: id })
+  const vote = (anecdote) => {
+    console.log('vote', anecdote)
+    dispatch({ type: 'anecdotes/vote', payload: anecdote.id })
+    dispatch({ type: 'notification/setNotification', payload: `you have ${anecdote.content}` })
+    setTimeout(() => {
+      dispatch({ type: 'notification/setNotification', payload: "" })
+    }, 5000)
   }
 
   console.log('anecdotes', anecdotes);
@@ -22,7 +26,7 @@ const AnecdoteList = () => {
             </div>
             <div>
               has {anecdote.votes}
-              <button onClick={() => vote(anecdote.id)}>vote</button>
+              <button onClick={() => vote(anecdote)}>vote</button>
             </div>
           </div>
         )
