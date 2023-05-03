@@ -1,5 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { updateAnecdote } from '../reducers/anecdoteReducer';
+import { setNotification } from '../reducers/notificationReducer';
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(({ anecdotes, filter }) => anecdotes.filter(a => a.content.includes(filter))).sort((a, b) => b.votes - a.votes);
@@ -7,11 +9,8 @@ const AnecdoteList = () => {
 
   const vote = (anecdote) => {
     console.log('vote', anecdote)
-    dispatch({ type: 'anecdotes/vote', payload: anecdote.id })
-    dispatch({ type: 'notification/setNotification', payload: `you have ${anecdote.content}` })
-    setTimeout(() => {
-      dispatch({ type: 'notification/setNotification', payload: "" })
-    }, 5000)
+    dispatch(updateAnecdote(anecdote))
+    dispatch(setNotification(`you have ${anecdote.content}`, 5))
   }
 
   console.log('anecdotes', anecdotes);
