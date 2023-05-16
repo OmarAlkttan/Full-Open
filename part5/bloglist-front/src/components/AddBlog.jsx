@@ -1,10 +1,29 @@
-import { useDispatch } from 'react-redux'
-import { createBlog } from '../reducers/blogReducer'
 import { useRef } from 'react'
-import { setNotification } from '../reducers/notificationReducer'
+import { useMutation, useQueryClient } from 'react-query'
+import blogService from '../services/blogs'
+import { useNotificationDispatch } from '../NotificationContext'
 
 const AddBlog = () => {
-  const dispatch = useDispatch()
+  const queryClient = useQueryClient()
+
+  const notificationDispatch = useNotificationDispatch()
+
+  const newBlogMutation = useMutation(blogService.create, {
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData('blogs')
+      queryClient.setQueryData('blogs', blogs.concat(newBlog))
+      notificationDispatch({ type: 'create', payload: newBlog.title })
+      setTimeout(() => {
+        notificationDispatch({ type: 'clear' })
+      }, 3000)
+    },
+    onError: (err) => {
+      notificationDispatch({ type: 'error', payload: err.message })
+      setTimeout(() => {
+        notificationDispatch({ type: 'clear' })
+      }, 3000)
+    },
+  })
 
   const addBlogForm = useRef(null)
 
@@ -20,20 +39,7 @@ const AddBlog = () => {
     addBlogForm.current.title.value = ''
     addBlogForm.current.author.value = ''
     addBlogForm.current.url.value = ''
-    try {
-      dispatch(createBlog(newBlog))
-      dispatch(
-        setNotification(
-          {
-            message: `a new blog ${newBlog.title} ${newBlog.author}`,
-            cName: 'notify',
-          },
-          3000
-        )
-      )
-    } catch (err) {
-      setNotification
-    }
+    newBlogMutation.mutate(newBlog)
   }
   return (
     <form onSubmit={onAddDispatch} ref={addBlogForm}>

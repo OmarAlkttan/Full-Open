@@ -45,6 +45,7 @@ const remove = async (blog) => {
 
   const response = await axios.delete(`/api/blogs/${blog.id}`, config)
   console.log('response', response)
+  return blog
 }
 
 export default { getAll, setToken, create, update, remove }

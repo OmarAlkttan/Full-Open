@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { removeBlog, updateBlog } from '../reducers/blogReducer'
+import { useMutation, useQueryClient } from 'react-query'
+import blogService from '../services/blogs'
+import { useNotificationDispatch } from '../NotificationContext'
 
 const Blog = ({ blog }) => {
   const blogStyle = {
@@ -13,14 +14,57 @@ const Blog = ({ blog }) => {
 
   const [showDetailts, setShowDetails] = useState(false)
 
-  const dispatch = useDispatch()
+  const queryClient = useQueryClient()
+
+  const notificationDispatch = useNotificationDispatch()
+
+  const updateBlogMutation = useMutation(blogService.update, {
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData('blogs')
+      queryClient.setQueryData(
+        'blogs',
+        blogs.map((blog) => (blog.id === newBlog.id ? newBlog : blog))
+      )
+      notificationDispatch({ type: 'like', payload: newBlog.title })
+      setTimeout(() => {
+        notificationDispatch({ type: 'clear' })
+      }, 3000)
+    },
+    onError: (err) => {
+      notificationDispatch({ type: 'error', payload: err.message })
+      setTimeout(() => {
+        notificationDispatch({ type: 'clear' })
+      }, 3000)
+    },
+  })
+
+  const removeBlogMutation = useMutation(blogService.remove, {
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData('blogs')
+      queryClient.setQueryData(
+        'blogs',
+        blogs.filter((blog) => blog.id !== newBlog.id)
+      )
+      notificationDispatch({ type: 'remove', payload: newBlog.title })
+      setTimeout(() => {
+        notificationDispatch({ type: 'clear' })
+      }, 3000)
+    },
+    onError: (err) => {
+      notificationDispatch({ type: 'error', payload: err.message })
+      setTimeout(() => {
+        notificationDispatch({ type: 'clear' })
+      }, 3000)
+    },
+  })
+
 
   const update = (newBlog) => {
-    dispatch(updateBlog(newBlog))
+    updateBlogMutation.mutate(newBlog)
   }
 
   const remove = (blog) => {
-    dispatch(removeBlog(blog))
+    removeBlogMutation.mutate(blog)
   }
 
   const toggleDetails = () => {

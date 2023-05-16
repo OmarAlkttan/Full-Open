@@ -11,12 +11,13 @@ import AddBlog from './components/AddBlog'
 
 import Toggable from './components/Toggable'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs } from './reducers/blogReducer'
 import { logout, setUser, userLogin } from './reducers/userReducer'
 import { setNotification } from './reducers/notificationReducer'
+import { useQuery } from 'react-query'
+import { useNotificationValue } from './NotificationContext'
 
 const Notification = () => {
-  const notification = useSelector((state) => state.notification)
+  const notification = useNotificationValue()
   if (notification) {
     return <div className={notification.cName}>{notification.message}</div>
   }
@@ -31,15 +32,16 @@ const App = () => {
 
   const toggleRef = useRef(null)
 
+  const result = useQuery('blogs', blogService.getAll, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  })
+
+  const blogs = result.isSuccess ? result.data : []
+
+  console.log('blogs from query', blogs)
+
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(initializeBlogs())
-  }, [dispatch])
-
-  const blogs = useSelector((state) => state.blogs)
-
-  console.log('blogs from Redux Reducer', blogs)
 
   useEffect(() => {
     const userJson = window.localStorage.getItem('loggedInUser')
