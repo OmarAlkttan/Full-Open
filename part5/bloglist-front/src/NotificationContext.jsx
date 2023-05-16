@@ -18,6 +18,11 @@ const notificationReducer = (state, action) => {
       message: `blog ${action.payload} removed`,
       cName: 'notify',
     })
+  case 'comment':
+    return (state = {
+      message: `blog ${action.payload} has new comment`,
+      cName: 'notify',
+    })
   case 'error':
     return (state = { message: action.payload, cName: 'error' })
   case 'clear':

@@ -1,20 +1,22 @@
 /* eslint-disable linebreak-style */
 import { useEffect, useRef } from 'react'
 
-import Blog from './components/Blog'
-
 import blogService from './services/blogs'
+
+import userService from './services/users'
 
 import './App.css'
 
-import AddBlog from './components/AddBlog'
-
-import Toggable from './components/Toggable'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout, setUser, userLogin } from './reducers/userReducer'
 import { setNotification } from './reducers/notificationReducer'
 import { useQuery } from 'react-query'
 import { useNotificationValue } from './NotificationContext'
+import { Link, Route, Routes, useMatch } from 'react-router-dom'
+import Blogs from './components/Blogs'
+import Users from './components/Users'
+import User from './components/User'
+import BlogView from './components/BlogView'
 
 const Notification = () => {
   const notification = useNotificationValue()
@@ -30,14 +32,37 @@ const App = () => {
 
   console.log('user from reducer', userRed)
 
-  const toggleRef = useRef(null)
-
   const result = useQuery('blogs', blogService.getAll, {
     retry: false,
     refetchOnWindowFocus: false,
   })
 
+  const userMatch = useMatch('/users/:id')
+  console.log('userId', userMatch)
+
+  const userResult = useQuery('users', userService.getAllUsers, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  })
+
+  const users = userResult.isSuccess ? userResult.data : []
+
+  console.log('users', users)
+
+  const user =
+    userMatch !== null
+      ? users.find((user) => user.id === userMatch.params.id)
+      : null
+
+  console.log('user', user)
   const blogs = result.isSuccess ? result.data : []
+
+  const blogMatch = useMatch('/blogs/:id')
+
+  const blog =
+    blogMatch !== null
+      ? blogs.find((blog) => blog.id === blogMatch.params.id)
+      : null
 
   console.log('blogs from query', blogs)
 
@@ -107,24 +132,31 @@ const App = () => {
         </form>
       ) : (
         <div>
-          <h2>blogs</h2>
-
-          <p>
-            {userRed.name} logged in{' '}
-            <button onClick={handleLogout}>logout</button>
-          </p>
+          <div style={{ backgroundColor: '#a6a6a6', padding: '10px' }}>
+            <Link to={'/'} style={{ paddingRight: '10px' }}>
+              blogs{' '}
+            </Link>
+            <Link to={'/users'} style={{ paddingRight: '10px' }}>
+              users{' '}
+            </Link>
+            {userRed.username} logged in
+            <button
+              onClick={handleLogout}
+              style={{ marginLeft: '10px', padding: '5px 10px' }}
+            >
+              logout
+            </button>
+          </div>
+          <h2>blog app</h2>
 
           <br />
 
-          <Toggable buttonLabel="new blog" ref={toggleRef}>
-            <AddBlog />
-          </Toggable>
-
-          <br />
-
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
+          <Routes>
+            <Route path="/" element={<Blogs blogs={blogs} />} />
+            <Route path="/users" element={<Users users={users} />} />
+            <Route path="/users/:id" element={<User user={user} />} />
+            <Route path="/blogs/:id" element={<BlogView blog={blog} />} />
+          </Routes>
         </div>
       )}
     </div>

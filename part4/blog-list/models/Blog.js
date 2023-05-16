@@ -22,7 +22,8 @@ const blogSchema = new mongoose.Schema({
     ref: 'User'
   },
   url: { type: String, required: true },
-  likes: { type: Number, default: 0 }
+  likes: { type: Number, default: 0 },
+  comments: { type: Array, required: false }
 });
 
 blogSchema.set('toJSON', {

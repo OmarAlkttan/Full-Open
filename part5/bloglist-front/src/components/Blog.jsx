@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import blogService from '../services/blogs'
 import { useNotificationDispatch } from '../NotificationContext'
+import { Link } from 'react-router-dom'
 
 const Blog = ({ blog }) => {
   const blogStyle = {
@@ -58,7 +59,6 @@ const Blog = ({ blog }) => {
     },
   })
 
-
   const update = (newBlog) => {
     updateBlogMutation.mutate(newBlog)
   }
@@ -75,7 +75,7 @@ const Blog = ({ blog }) => {
   return (
     <div style={blogStyle}>
       <p>
-        {blog.title}{' '}
+        <Link to={`blogs/${blog.id}`}>{blog.title}</Link>{' '}
         <button onClick={toggleDetails}>
           {showDetailts ? 'hide' : 'view'}
         </button>
