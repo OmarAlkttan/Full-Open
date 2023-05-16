@@ -3,11 +3,9 @@ import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import Blog from './Blog'
 
-
 test('Renders main page correctly', () => {
-
   const blog = {
-    title: 'trying jest'
+    title: 'trying jest',
   }
 
   render(<Blog blog={blog} />)

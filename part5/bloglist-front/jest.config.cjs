@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 module.exports = {
   // other Jest configuration options...
-  testEnvironment: 'jsdom',
+  testEnvironment: "jsdom",
   transform: {
-    '^.+\\.jsx?$': 'babel-jest'
-  }
-}
+    "^.+\\.jsx?$": "babel-jest",
+  },
+};

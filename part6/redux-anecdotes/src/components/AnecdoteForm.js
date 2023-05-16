@@ -8,7 +8,7 @@ const AnecdoteForm = () => {
   const dispatch = useDispatch()
   const anecdoteFormRef = useRef(null);
 
-  const addAnecdotes = async (event) => {
+  const addAnecdotes = (event) => {
     console.log('event', event);
     event.preventDefault();
     const content = anecdoteFormRef.current.anecdote.value;
