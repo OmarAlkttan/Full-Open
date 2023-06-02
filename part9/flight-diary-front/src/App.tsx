@@ -43,7 +43,7 @@ const AddDiaryForm = () => {
       console.log(err);
       const error = err as AxiosError;
       console.log('hello', error.response?.data);
-      setError(error.response?.data as string );
+      setError(error.response?.data as string);
     })
     setDate('');
     setComment('');

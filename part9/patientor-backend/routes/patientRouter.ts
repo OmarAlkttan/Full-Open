@@ -9,6 +9,10 @@ router.get('/', (_req, res) => {
   res.json(patientService.getAllWSsn());
 });
 
+router.get('/:id', (req, res) =>{
+  res.json(patientService.getOne(req.params.id));
+});
+
 router.post('/', (req, res) => {
   try{
     const patient : NewPaitent = toNewPatientEntry(req.body);

@@ -22,4 +22,12 @@ const addPatient = (patient : NewPaitent) : Patient => {
   return newPatient; 
 };
 
-export default { getAll, getAllWSsn, addPatient };
+const getOne = (id : string) : Patient => {
+  const patient : Patient | undefined = patients.find(p => p.id === id);
+  if(patient){
+    return patient;
+  }
+  throw new Error(`Patient ${id} does not exist`);
+};
+
+export default { getAll, getAllWSsn, addPatient, getOne };

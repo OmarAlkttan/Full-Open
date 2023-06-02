@@ -1,5 +1,5 @@
 import { Dialog, DialogTitle, DialogContent, Divider, Alert } from '@mui/material';
-
+import React from 'react';
 import AddPatientForm from "./AddPatientForm";
 import { PatientFormValues } from "../../types";
 
