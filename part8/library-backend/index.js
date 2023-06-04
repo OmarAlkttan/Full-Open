@@ -176,11 +176,21 @@ const resolvers = {
     bookCount: async () => Author.collection.countDocuments(),
     authorCount: async () => Book.collection.countDocuments(),
     allBooks: async (root, args) => {
-      return Book.find(args.author ?
+      let books = await Book.find(args.author ?
         args.genre ?
           { author: args.author, genre: args.genre } :
           { author: args.author }
-        : args.genre ? { genres: args.genre } : {});
+        : args.genre ? { genres: args.genre } : {}).populate('author');
+      books = books.map(book => {
+        let { author, ...newBook } = book
+        newBook = newBook._doc;
+        newBook.author = author.name;
+        newBook.id = newBook._id;
+        console.log('new book', newBook);
+        return newBook;
+      })
+
+      return books;
     },
     allAuthors: async () => Author.find({}),
     me: (root, args, context) => {
